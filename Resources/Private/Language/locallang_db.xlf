@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-02-09T18:41:52Z" product-name="spurl">
+		<header/>
+		<body>
+
+			<trans-unit id="tx_spurl_domain_model_path">
+				<source>Path</source>
+			</trans-unit>
+
+			<trans-unit id="tx_spurl_domain_model_pagepath">
+				<source>Pagepath</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

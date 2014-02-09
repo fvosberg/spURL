@@ -1,0 +1,11 @@
+# Module configuration
+module.tx_spurl {
+	persistence {
+		storagePid = {$module.tx_spurl.persistence.storagePid}
+	}
+	view {
+		templateRootPath = {$module.tx_spurl.view.templateRootPath}
+		partialRootPath = {$module.tx_spurl.view.partialRootPath}
+		layoutRootPath = {$module.tx_spurl.view.layoutRootPath}
+	}
+}
