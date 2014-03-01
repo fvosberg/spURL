@@ -149,5 +149,33 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	public function addProcessedPathPart($processed) {
 		$this->processedPathParts[] = $processed;
 	}
+
+	public function getParams() {
+		$params = $this->initParams;
+		foreach ($this->translators as $translator) {
+			$params = $this->mergeParams($params, $translator->getDecodedParams());
+		}
+		return $params;
+	}
+
+	protected function mergeParams($one, $two) {
+		// both arrays
+		if ( is_array($one) && is_array($two) ) {
+			$result = $one;
+			foreach ( $two as $kTwo => $vTwo ) {
+				// numerical index?
+				if (is_int($kTwo) || ctype_digit($kTwo)) {
+					$result[] = $vTwo;
+				} else if (!isset( $result[$kTwo] )) {
+					$result[$kTwo] = $vTwo;
+				} else {
+					$result[$kTwo] = $this->mergeParams($one[$kTwo], $vTwo);
+				}
+			}
+			return $result;
+		} else {
+			return $two;
+		}
+	}
 }
 ?>

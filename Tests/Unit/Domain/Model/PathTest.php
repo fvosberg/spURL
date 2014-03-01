@@ -207,5 +207,68 @@ class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 			$fixture->getNotProcessedPathParts()
 		);
 	}
+
+	/**
+	 * @test
+	 */
+	public function getParams() {
+		$translator = $this->getMock('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator');
+		$translator->expects($this->once())
+			->method('getDecodedParams')
+			->will($this->returnValue([
+				'foo' => [
+					'bar' => [
+						'barfoo'
+					],
+					'foobar'
+				]
+			]));
+
+		$translators[] = $translator;
+
+		$translator = $this->getMock('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator');
+		$translator->expects($this->once())
+			->method('getDecodedParams')
+			->will($this->returnValue([
+				'hello' => 'world',
+				'foo' => [
+					'bar' => [
+						'barfoo2'
+					],
+					'barfoo2'
+				],
+				'baarfoo2'
+			]));
+
+		$translators[] = $translator;
+
+		$this->setProtectedProperty($this->fixture, 'translators', $translators);
+		$this->setProtectedProperty($this->fixture, 'initParams', ['hello' => 'nobody', 'init' => 'param']);
+
+		$this->assertEquals(
+			[
+				'hello' => 'world',
+				'init' => 'param',
+				'foo' => [
+					'bar' => [
+						'barfoo',
+						'barfoo2'
+					],
+					'foobar',
+					'barfoo2'
+				],
+				'baarfoo2'
+			],
+			$this->fixture->getParams()
+		);
+	}
+
+	protected function setProtectedProperty($object, $name, $value) {
+		$reflection = new \ReflectionClass($object);
+		$reflection_property = $reflection->getProperty($name);
+		$reflection_property->setAccessible(true);
+
+		$reflection_property->setValue($object, $value);
+	}
 }
 ?>

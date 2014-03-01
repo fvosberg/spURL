@@ -80,8 +80,8 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 				$path->initTranslators($settings['pathParts']);
 			}
 		}
-
-		return $path->getDecodedParams();
+		// decoded and init paramsu
+		return $path->getParams();
 	}
 
 	protected function getSettingsOfPage($pageId) {
