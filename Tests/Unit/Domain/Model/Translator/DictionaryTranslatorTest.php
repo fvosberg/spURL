@@ -1,5 +1,5 @@
 <?php
-namespace Rattazonk\Spurl\Domain\Translator;
+namespace Rattazonk\Spurl\Tests;
 
 /***************************************************************
  *  Copyright notice
@@ -11,7 +11,7 @@ namespace Rattazonk\Spurl\Domain\Translator;
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
+ *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
  *  The GNU General Public License can be found at
@@ -26,55 +26,29 @@ namespace Rattazonk\Spurl\Domain\Translator;
  ***************************************************************/
 
 /**
+ * Test case for class \Rattazonk\Spurl\Domain\Model\Path.
  *
- *
- * @package spurl
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
+ * @package TYPO3
+ * @subpackage spURL
+ *
+ * @author Frederik Vosberg <frederik.vosberg@rattazonk.de>
  */
-abstract class AbstractTranslator {
-	/**
-	 * @var array
-	 */
-	protected $settings = [];
-
+class DictionaryTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
-	protected $path;
+	protected $fixture;
 
-	/**
-	 * @param array 	$settings
-	 * @return void
-	 */
-	public function setSettings($settings) {
-		$this->settings = $settings;
+	public function setUp() {
+		$this->fixture = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Translator');
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getSettings() {
-		return $this->settings;
-	}
-
-	/**
-	 * @param \Rattazonk\Spurl\Domain\Model\Path 	$path
-	 * @return void
-	 */
-	public function setPath(\Rattazonk\Spurl\Domain\Model\Path $path) {
-		$this->path = $path;
-	}
-
-	/**
-	 * @return \Rattazonk\Spurl\Domain\Model\Path
-	 */
-	public function getPath() {
-		return $this->path;
-	}
-
-	public function decode() {
-
+	public function tearDown() {
+		unset($this->fixture);
 	}
 }
 ?>
