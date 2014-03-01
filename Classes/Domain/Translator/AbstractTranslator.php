@@ -44,6 +44,11 @@ abstract class AbstractTranslator {
 	protected $path;
 
 	/**
+	 * @var array
+	 */
+	protected $decodedParams = [];
+
+	/**
 	 * @param array 	$settings
 	 * @return void
 	 */
@@ -73,8 +78,12 @@ abstract class AbstractTranslator {
 		return $this->path;
 	}
 
-	public function decode() {
+	public function getDecodedParams() {
+		return $this->decodedParams;
+	}
 
+	protected function addDecodedParams($params) {
+		$this->decodedParams = array_merge_recursive($this->decodedParams, $params);
 	}
 }
 ?>

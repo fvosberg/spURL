@@ -131,5 +131,13 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	public function setTranslatorPointerToNegativeOne() {
 		$this->translatorPointerOnNegativeOne = TRUE;
 	}
+
+	public function getNotProcessedPathParts() {
+
+	}
+
+	public function addProcessedPathPart() {
+
+	}
 }
 ?>

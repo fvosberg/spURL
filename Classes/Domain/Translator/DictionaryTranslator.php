@@ -33,5 +33,22 @@ namespace Rattazonk\Spurl\Domain\Translator;
  *
  */
 class DictionaryTranslator extends AbstractTranslator implements TranslatorInterface {
+	public function decode() {
+		$pathParts = $this->path->getNotProcessedPathParts();
+		foreach ( $pathParts as $pathPart ) {
+			$pathPartProcessed = FALSE;
+			foreach ($this->settings['dict'] as $dictionary) {
+				if ($pathPart == $dictionary['encoded']) {
+					$this->addDecodedParams( $dictionary['decoded'] );
+					$pathPartProcessed = TRUE;
+				}
+			}
+			if ( $pathPartProcessed ) {
+				$this->path->addProcessedPathPart( $pathPart );
+			} else {
+				break;
+			}
+		}
+	}
 }
 ?>

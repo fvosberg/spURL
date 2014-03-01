@@ -39,16 +39,72 @@ namespace Rattazonk\Spurl\Tests;
  */
 class DictionaryTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattazonk\Spurl\Domain\Model\Path
+	 * @var \Rattazonk\Spurl\Domain\Translator\DictionaryTranslator
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Translator');
+		$this->fixture = $this->objectManager->get('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator');
+		$this->fixture->setSettings([
+			'dict' => [
+				10 => [
+                    'encoded' => 'rattazonk.com',
+                    'decoded' => [
+                    	'L' => 0
+                    ]
+                ],
+                20 => [
+                    'onlyDecode' => 1,
+                    'encoded' => 'www.rattazonk.com',
+                    'decoded' => [
+                    	'L' => 0
+                    ]
+                ],
+                30 => [
+                    'encoded' => 'rattazonk.de',
+                    'decoded' => [
+                    	'L' => 1
+                    ]
+                ],
+                40 => [
+                    'onlyDecode' => 1,
+                    'encoded' => 'www.rattazonk.de',
+                    'decoded' => [
+                    	'L' => 1
+                    ]
+                ],
+                50 => [
+                    'encoded' => 'dontTranslate',
+                    'decoded' => [
+                    	'foo' => 'bar'
+                    ]
+                ]
+			]
+		]);
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
+	}
+
+	/**
+	 * @test
+	 */
+	public function decode() {
+		$path = $this->getMock('\Rattazonk\Spurl\Domain\Model\Path');
+		$path->expects($this->any())
+			->method('getNotProcessedPathParts')
+			->will($this->returnValue([
+				'rattazonk.com',
+				'blog',
+				'dontTranslate' // because blog could not be decoded
+			]));
+		$path->expects($this->once())
+			->method('addProcessedPathPart')
+			->with($this->equalTo('rattazonk.com'));
+		$this->fixture->setPath($path);
+		$this->fixture->decode();
+		$this->assertEquals(['L' => 0], $this->fixture->getDecodedParams());
 	}
 }
 ?>
