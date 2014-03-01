@@ -17,8 +17,8 @@ Extension Name
 :Description: manuals covering TYPO3 extension "spURL"
 :Language: en
 :Author: Frederik Vosberg
-:Creation: 2014-02-09
-:Generation: 18:41
+:Creation: 2014-02-19
+:Generation: 20:52
 :Licence: Open Content License available from `www.opencontent.org/opl.shtml <http://www.opencontent.org/opl.shtml>`_
 
 The content of this document is related to TYPO3, a GNU/GPL CMS/Framework available from `www.typo3.org

@@ -1,11 +1,11 @@
 <?php
-namespace Rattzonk\Spurl\Domain\Model;
+namespace Rattazonk\Spurl\Domain\Model;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -33,6 +33,103 @@ namespace Rattzonk\Spurl\Domain\Model;
  *
  */
 class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+	/**
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+	 */
+	protected $objectManager;
 
+	/**
+	 * @var array
+	 */
+	protected $initPathParts = [];
+
+	/**
+	 * @var array
+	 */
+	protected $initParams = [];
+
+	/**
+	 * @var array<>
+	 */
+	protected $translators = [];
+
+	/**
+	 * a flag to reduce the current and next to next.
+	 * @var bool
+	 */
+	protected $translatorPointerOnNegativeOne = TRUE;
+
+	public function initializeObject() {
+		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+	}
+
+	/**
+	 * initializes the initParams and initPathParts from an encoded Url
+	 * @param string 	$encodedUrl
+	 * @return void
+	 */
+	public function setEncodedUrl($encodedUrl) {
+		$encodedUrl = preg_replace('/^http(s)?:\/\//', '', $encodedUrl);
+
+		$paramQuery = (string) parse_url($encodedUrl, PHP_URL_QUERY);
+		$encodedUrl = str_replace('?' . $paramQuery, '', $encodedUrl);
+
+
+		$this->initPathParts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('/', $encodedUrl, TRUE);
+		parse_str($paramQuery, $this->initParams);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getInitParams() {
+		return $this->initParams;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getInitPathParts() {
+		return $this->initPathParts;
+	}
+
+	public function initTranslators($translatorDefinitions) {
+		foreach ($translatorDefinitions as $key => $translatorDefinition) {
+			$this->translators[$key] = $this->objectManager->get($translatorDefinition['class']);
+			$this->translators[$key]->setSettings($translatorDefinition['settings']);
+			$this->translators[$key]->setPath($this);
+		}
+	}
+
+	public function getTranslators() {
+		return $this->translators;
+	}
+
+	public function resetTranslatorPointer() {
+		reset($this->translators);
+	}
+
+	/**
+	 * sets the pointer to the next translator and returns a boolean
+	 * @return boolean
+	 */
+	public function nextTranslator() {
+		if ($this->translatorPointerOnNegativeOne) {
+			$this->translatorPointerOnNegativeOne = FALSE;
+			reset($this->translators);
+			return TRUE;
+		} else {
+			return (bool) next($this->translators);
+		}
+	}
+
+	public function getCurrentTranslator() {
+		$this->translatorPointerOnNegativeOne = FALSE;
+		return current($this->translators);
+	}
+
+	public function setTranslatorPointerToNegativeOne() {
+		$this->translatorPointerOnNegativeOne = TRUE;
+	}
 }
 ?>

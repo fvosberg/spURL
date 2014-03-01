@@ -9,7 +9,7 @@ if (TYPO3_MODE === 'BE') {
 	 * Registers a Backend Module
 	 */
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-		'Rattzonk.' . $_EXTKEY,
+		'Rattazonk.' . $_EXTKEY,
 		'tools',	 // Make module a submodule of 'tools'
 		'configurator',	// Submodule key
 		'',						// Position
@@ -32,7 +32,7 @@ if (TYPO3_MODE === 'BE') {
 $TCA['tx_spurl_domain_model_path'] = array(
 	'ctrl' => array(
 		'title'	=> 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_path',
-		'label' => 'uid',
+		'label' => 'page',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -50,7 +50,7 @@ $TCA['tx_spurl_domain_model_path'] = array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => '',
+		'searchFields' => 'page,',
 		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/Path.php',
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_spurl_domain_model_path.gif'
 	),
@@ -84,5 +84,7 @@ $TCA['tx_spurl_domain_model_pagepath'] = array(
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_spurl_domain_model_pagepath.gif'
 	),
 );
+
+
 
 ?>

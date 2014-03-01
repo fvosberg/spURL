@@ -1,11 +1,11 @@
 <?php
-namespace Rattzonk\Spurl\Domain\Model;
+namespace Rattazonk\Spurl\Domain\Translator;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -32,7 +32,49 @@ namespace Rattzonk\Spurl\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Pagepath extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class AbstractTranslator {
+	/**
+	 * @var array
+	 */
+	protected $settings = [];
 
+	/**
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
+	 */
+	protected $path;
+
+	/**
+	 * @param array 	$settings
+	 * @return void
+	 */
+	public function setSettings($settings) {
+		$this->settings = $settings;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getSettings() {
+		return $this->settings;
+	}
+
+	/**
+	 * @param \Rattazonk\Spurl\Domain\Model\Path 	$path
+	 * @return void
+	 */
+	public function setPath(\Rattazonk\Spurl\Domain\Model\Path $path) {
+		$this->path = $path;
+	}
+
+	/**
+	 * @return \Rattazonk\Spurl\Domain\Model\Path
+	 */
+	public function getPath() {
+		return $this->path;
+	}
+
+	public function decode() {
+
+	}
 }
 ?>

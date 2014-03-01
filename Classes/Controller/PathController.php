@@ -1,11 +1,11 @@
 <?php
-namespace Rattzonk\Spurl\Controller;
+namespace Rattazonk\Spurl\Controller;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,59 +35,94 @@ namespace Rattzonk\Spurl\Controller;
 class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * action list
-	 *
-	 * @return void
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
-	public function listAction() {
-		$paths = $this->pathRepository->findAll();
-		$this->view->assign('paths', $paths);
+	protected $path;
+
+	/**
+	 * encodes the decoded URL from the TypoScript link creation to a pretty spURL
+	 * @param string 	$decodedUrl 	URL with get params
+	 * @return string 	$encodedUrl		spURL
+	 */
+	public function encodeTypoScriptLinkAction($decodedUrl) {
+		// REFATOR NEW API TODO
+		$this->path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
+		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($this->settings);
+		die();
+		$this->path->setConfig($this->settings['pathParts']);
+		return $this->path->encode($decodedUrl);
 	}
 
 	/**
-	 * action new
-	 *
-	 * @param \Rattzonk\Spurl\Domain\Model\Path $newPath
-	 * @dontvalidate $newPath
-	 * @return void
+	 * @param string 	$encodedUrl
+	 * @return array 	getParams
 	 */
-	public function newAction(\Rattzonk\Spurl\Domain\Model\Path $newPath = NULL) {
-		$this->view->assign('newPath', $newPath);
+	public function decodeAction($encodedUrl) {
+		$path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
+		$path->setEncodedUrl($encodedUrl);
+
+		// TODO gehirnfurzenglisch ersetzen
+		// load the settings of the root page to get the translators for the path parts till page path
+		// TODO config the Root page uid
+		$pageId = 1;
+		$settings = $this->getSettingsOfPage($pageId);
+		$path->initTranslators($settings['translators']);
+
+		// whenever the id got decoded we are stopping to retrieve the settings from this page
+		$path->setTranslatorPointerToNegativeOne();
+		while ( $path->nextTranslator() ) {
+			$currentTranslator = $path->getCurrentTranslator();
+			$currentTranslator->decode();
+			$lastGetParams = $currentTranslator->getDecodedParams();
+			if (isset($lastGetParams['id']) && (int) $lastGetParams['id'] != $pageId) {
+				$pageId = (int) $lastGetParams['id'];
+				$settings = $this->getSettingsOfPage($pageId);
+				$path->initTranslators($settings['pathParts']);
+			}
+		}
+
+		return $path->getDecodedParams();
+	}
+
+	protected function getSettingsOfPage($pageId) {
+		// do not instantiate every ... TODO
+		$typoScriptService = $this->objectManager->get('TYPO3\CMS\Extbase\Service\TypoScriptService');
+		$config = $typoScriptService->convertTypoScriptArrayToPlainArray(
+			$this->getTypoScriptTemplateOfPage($pageId)
+		);
+		return $config['plugin']['tx_spurl']['settings'];
 	}
 
 	/**
-	 * action create
+	 * dangerous method, because we depend highly on the internal structure of the TypoScriptFrontendController
+	 * we don't use the global TSFE to get the typoscript templates for the indexer and dont destroy the configuration of the current page
+	 * pages should be loaded from the spUrl cache, so it is not a performance issue
 	 *
-	 * @param \Rattzonk\Spurl\Domain\Model\Path $newPath
-	 * @return void
+	 * @param int $pageId 	The id of the page we want to load the typoscript from
+	 * @return array
 	 */
-	public function createAction(\Rattzonk\Spurl\Domain\Model\Path $newPath) {
-		$this->pathRepository->add($newPath);
-		$this->flashMessageContainer->add('Your new Path was created.');
-		$this->redirect('list');
-	}
+	protected function getTypoScriptTemplateOfPage($pageId) {
+		// dont use the objectmanager, because it will fail, because of the classInfo ... maybe TODO
+		$tsfe = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+			'\TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController',
+			$TYPO3_CONF_VARS,
+			$pageId,
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type'),
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('no_cache'),
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cHash'),
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('jumpurl'),
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('MP'),
+			\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('RDCT')
+		);
+		// $this->typoScriptFrontendController->id = $pageId;
+		$tsfe->initFEuser();
+		$tsfe->determineId();
+		$tsfe->getPageAndRootline();
+		$tsfe->initTemplate();
+		$tsfe->getFromCache();
+		$tsfe->getConfigArray();
 
-	/**
-	 * action edit
-	 *
-	 * @param \Rattzonk\Spurl\Domain\Model\Path $path
-	 * @return void
-	 */
-	public function editAction(\Rattzonk\Spurl\Domain\Model\Path $path) {
-		$this->view->assign('path', $path);
+		return $tsfe->tmpl->setup;
 	}
-
-	/**
-	 * action update
-	 *
-	 * @param \Rattzonk\Spurl\Domain\Model\Path $path
-	 * @return void
-	 */
-	public function updateAction(\Rattzonk\Spurl\Domain\Model\Path $path) {
-		$this->pathRepository->update($path);
-		$this->flashMessageContainer->add('Your Path was updated.');
-		$this->redirect('list');
-	}
-
 }
 ?>

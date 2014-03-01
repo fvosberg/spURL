@@ -1,11 +1,11 @@
 <?php
+namespace Rattazonk\Spurl\Tests;
 
-namespace Rattzonk\Spurl\Tests;
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,7 +26,7 @@ namespace Rattzonk\Spurl\Tests;
  ***************************************************************/
 
 /**
- * Test case for class \Rattzonk\Spurl\Domain\Model\Path.
+ * Test case for class \Rattazonk\Spurl\Domain\Model\Path.
  *
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -39,24 +39,140 @@ namespace Rattzonk\Spurl\Tests;
  */
 class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattzonk\Spurl\Domain\Model\Path
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Rattzonk\Spurl\Domain\Model\Path();
+		$this->fixture = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
 	}
-	
+
+	// KANN ICH TESTEN, OB DER OBJECTMANAGER VORHANDEN IST?
+
+	/**
+	 * should extract the get params and the path parts from the given url
+	 *
+	 * @test
+	 */
+	public function setEncodedUrl() {
+		$this->fixture->setEncodedUrl('http://rattazonk.de/blog/?tx_blogit_posts%5Bpost%5D=1&tx_blogit_posts%5Baction%5D=show');
+		$this->assertEquals([
+				'tx_blogit_posts' => [
+					'post' => '1',
+					'action' => 'show'
+				]
+			],
+			$this->fixture->getInitParams()
+		);
+		$this->assertEquals(
+			['rattazonk.de', 'blog'],
+			$this->fixture->getInitPathParts()
+		);
+
+		$this->fixture->setEncodedUrl('http://rattazonk.com/foo/bar/');
+		$this->assertEquals( [], $this->fixture->getInitParams() );
+		$this->assertEquals(
+			['rattazonk.com', 'foo', 'bar'],
+			$this->fixture->getInitPathParts()
+		);
+	}
+
+	/**
+	 * TODO What is about the dependency on the dictionary Translator
+	 * @test
+	 */
+	public function initDictionaryTranslators() {
+		$this->fixture->initTranslators([
+			10 => [
+				'class' => '\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator',
+				'settings' => ['foo' => 'bar']
+			],
+			20 => [
+				'class' => '\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator',
+				'settings' => ['bla' => 'blupp']
+			]
+		]);
+
+		$translators = $this->fixture->getTranslators();
+		$this->assertCount(2, $translators);
+		$this->assertContainsOnlyInstancesOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $translators);
+
+		$this->assertEquals(['foo' => 'bar'], $translators[10]->getSettings());
+		$this->assertSame($this->fixture, $translators[10]->getPath());
+		$this->assertEquals(['bla' => 'blupp'], $translators[20]->getSettings());
+		$this->assertSame($this->fixture, $translators[20]->getPath());
+
+		return $this->fixture;
+		// TODO exceptions for api protection
+	}
+
 	/**
 	 * @test
 	 */
-	public function dummyTestToNotLeaveThisFileEmpty() {
-		$this->markTestIncomplete();
+	public function initDictionaryTranslatorsApiProtection() {
+		$this->markTestIncomplete('This test has not been implemented yet');
 	}
-	
+
+	/**
+	 * @test
+	 * @depends initDictionaryTranslators
+	 */
+	public function initDictionaryTranslatorsMultiple($fixture) {
+		$fixture->initTranslators([
+			5 => [
+				'class' => '\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator',
+				'settings' => ['foo2' => 'bar2']
+			],
+			20 => [
+				'class' => '\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator',
+				'settings' => ['bla2' => 'blupp2']
+			]
+		]);
+
+		$translators = $fixture->getTranslators();
+		$this->assertCount(3, $translators);
+		$this->assertContainsOnlyInstancesOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $translators);
+
+		$this->assertEquals(['foo2' => 'bar2'], $translators[5]->getSettings());
+		$this->assertEquals(['foo' => 'bar'], $translators[10]->getSettings());
+		$this->assertEquals(['bla2' => 'blupp2'], $translators[20]->getSettings());
+
+		return $fixture;
+	}
+
+	/**
+	 * @test
+	 * @depends initDictionaryTranslatorsMultiple
+	 */
+	public function translatorPointer($fixture) {
+		$fixture->resetTranslatorPointer();
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertTrue($fixture->nextTranslator(), 'The second should be filled. ');
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertTrue($fixture->nextTranslator(), 'The third should be filled. ');
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertFalse($fixture->nextTranslator(), 'There should be no fourth. ');
+
+		return $fixture;
+	}
+
+	/**
+	 * @test
+	 * @depends translatorPointer
+	 */
+	public function setTranslatorPointerToNegativeOne($fixture) {
+		$fixture->setTranslatorPointerToNegativeOne();
+		$this->assertTrue($fixture->nextTranslator(), 'The first should be filled. ');
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertTrue($fixture->nextTranslator(), 'The second should be filled. ');
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertTrue($fixture->nextTranslator(), 'The third should be filled. ');
+		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
+		$this->assertFalse($fixture->nextTranslator(), 'There should be no fourth. ');
+	}
 }
 ?>

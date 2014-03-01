@@ -6,6 +6,8 @@ CREATE TABLE tx_spurl_domain_model_path (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
+	page int(11) unsigned DEFAULT '0',
+
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
 	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
@@ -71,5 +73,15 @@ CREATE TABLE tx_spurl_domain_model_pagepath (
 	KEY parent (pid),
 	KEY t3ver_oid (t3ver_oid,t3ver_wsid),
 	KEY language (l10n_parent,sys_language_uid)
+
+);
+
+#
+# Table structure for table 'pages'
+#
+CREATE TABLE pages (
+
+	title varchar(255) DEFAULT '' NOT NULL,
+	url text NOT NULL,
 
 );
