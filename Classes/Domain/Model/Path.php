@@ -46,6 +46,11 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @var array
 	 */
+	protected $processedPathParts = [];
+
+	/**
+	 * @var array
+	 */
 	protected $initParams = [];
 
 	/**
@@ -132,12 +137,17 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		$this->translatorPointerOnNegativeOne = TRUE;
 	}
 
+	/**
+	 * returns the path parts which were not decoded
+	 *
+	 * @return array
+	 */
 	public function getNotProcessedPathParts() {
-
+		return array_diff($this->initPathParts, $this->processedPathParts);
 	}
 
-	public function addProcessedPathPart() {
-
+	public function addProcessedPathPart($processed) {
+		$this->processedPathParts[] = $processed;
 	}
 }
 ?>

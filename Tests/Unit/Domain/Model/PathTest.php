@@ -79,6 +79,8 @@ class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 			['rattazonk.com', 'foo', 'bar'],
 			$this->fixture->getInitPathParts()
 		);
+
+		return $this->fixture;
 	}
 
 	/**
@@ -173,6 +175,37 @@ class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->assertTrue($fixture->nextTranslator(), 'The third should be filled. ');
 		$this->assertInstanceOf('\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator', $fixture->getCurrentTranslator());
 		$this->assertFalse($fixture->nextTranslator(), 'There should be no fourth. ');
+	}
+
+	/**
+	 * @test
+	 * @depends setEncodedUrl
+	 */
+	public function processedPathParts($fixture) {
+		$this->assertEquals(
+			['rattazonk.com', 'foo', 'bar'],
+			$fixture->getNotProcessedPathParts()
+		);
+
+		$fixture->addProcessedPathPart('rattazonk.com');
+
+		$this->assertEquals(
+			[1 => 'foo', 2 => 'bar'],
+			$fixture->getNotProcessedPathParts()
+		);
+
+		$fixture->addProcessedPathPart('foo');
+
+		$this->assertEquals(
+			[2 => 'bar'],
+			$fixture->getNotProcessedPathParts()
+		);
+		$fixture->addProcessedPathPart('bar');
+
+		$this->assertEquals(
+			[],
+			$fixture->getNotProcessedPathParts()
+		);
 	}
 }
 ?>
