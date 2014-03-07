@@ -6,10 +6,10 @@ if (!defined ('TYPO3_MODE')) {
 $TCA['tx_spurl_domain_model_path'] = array(
 	'ctrl' => $TCA['tx_spurl_domain_model_path']['ctrl'],
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, page',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, encoded, decoded',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, page,--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, encoded, decoded,--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -93,21 +93,23 @@ $TCA['tx_spurl_domain_model_path'] = array(
 				),
 			),
 		),
-		'page' => array(
+		'encoded' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_path.page',
+			'label' => 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_path.encoded',
 			'config' => array(
-				'type' => 'inline',
-				'foreign_table' => 'pages',
-				'minitems' => 0,
-				'maxitems' => 1,
-				'appearance' => array(
-					'collapseAll' => 0,
-					'levelLinksPosition' => 'top',
-					'showSynchronizationLink' => 1,
-					'showPossibleLocalizationRecords' => 1,
-					'showAllLocalizationLink' => 1
-				),
+				'type' => 'input',
+				'size' => 30,
+				'eval' => 'trim,required'
+			),
+		),
+		'decoded' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_path.decoded',
+			'config' => array(
+				'type' => 'text',
+				'cols' => 40,
+				'rows' => 15,
+				'eval' => 'trim,required'
 			),
 		),
 	),

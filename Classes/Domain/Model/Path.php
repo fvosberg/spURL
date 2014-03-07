@@ -1,11 +1,11 @@
 <?php
-namespace Rattazonk\Spurl\Domain\Model;
+namespace Rattzonk\Spurl\Domain\Model;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *
+ *  
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -33,149 +33,60 @@ namespace Rattazonk\Spurl\Domain\Model;
  *
  */
 class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
-	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-	 */
-	protected $objectManager;
 
 	/**
-	 * @var array
+	 * encoded
+	 *
+	 * @var \string
+	 * @validate NotEmpty
 	 */
-	protected $initPathParts = [];
+	protected $encoded;
 
 	/**
-	 * @var array
+	 * decoded
+	 *
+	 * @var \string
+	 * @validate NotEmpty
 	 */
-	protected $processedPathParts = [];
+	protected $decoded;
 
 	/**
-	 * @var array
+	 * Returns the encoded
+	 *
+	 * @return \string $encoded
 	 */
-	protected $initParams = [];
-
-	/**
-	 * @var array<>
-	 */
-	protected $translators = [];
-
-	/**
-	 * a flag to reduce the current and next to next.
-	 * @var bool
-	 */
-	protected $translatorPointerOnNegativeOne = TRUE;
-
-	public function initializeObject() {
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+	public function getEncoded() {
+		return $this->encoded;
 	}
 
 	/**
-	 * initializes the initParams and initPathParts from an encoded Url
-	 * @param string 	$encodedUrl
+	 * Sets the encoded
+	 *
+	 * @param \string $encoded
 	 * @return void
 	 */
-	public function setEncodedUrl($encodedUrl) {
-		$encodedUrl = preg_replace('/^http(s)?:\/\//', '', $encodedUrl);
-
-		$paramQuery = (string) parse_url($encodedUrl, PHP_URL_QUERY);
-		$encodedUrl = str_replace('?' . $paramQuery, '', $encodedUrl);
-
-
-		$this->initPathParts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('/', $encodedUrl, TRUE);
-		parse_str($paramQuery, $this->initParams);
+	public function setEncoded($encoded) {
+		$this->encoded = $encoded;
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getInitParams() {
-		return $this->initParams;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getInitPathParts() {
-		return $this->initPathParts;
-	}
-
-	public function initTranslators($translatorDefinitions) {
-		foreach ($translatorDefinitions as $key => $translatorDefinition) {
-			$this->translators[$key] = $this->objectManager->get($translatorDefinition['class']);
-			$this->translators[$key]->setSettings($translatorDefinition['settings']);
-			$this->translators[$key]->setPath($this);
-		}
-	}
-
-	public function getTranslators() {
-		return $this->translators;
-	}
-
-	public function resetTranslatorPointer() {
-		reset($this->translators);
-	}
-
-	/**
-	 * sets the pointer to the next translator and returns a boolean
-	 * @return boolean
-	 */
-	public function nextTranslator() {
-		if ($this->translatorPointerOnNegativeOne) {
-			$this->translatorPointerOnNegativeOne = FALSE;
-			reset($this->translators);
-			return TRUE;
-		} else {
-			return (bool) next($this->translators);
-		}
-	}
-
-	public function getCurrentTranslator() {
-		$this->translatorPointerOnNegativeOne = FALSE;
-		return current($this->translators);
-	}
-
-	public function setTranslatorPointerToNegativeOne() {
-		$this->translatorPointerOnNegativeOne = TRUE;
-	}
-
-	/**
-	 * returns the path parts which were not decoded
+	 * Returns the decoded
 	 *
-	 * @return array
+	 * @return \string $decoded
 	 */
-	public function getNotProcessedPathParts() {
-		return array_diff($this->initPathParts, $this->processedPathParts);
+	public function getDecoded() {
+		return $this->decoded;
 	}
 
-	public function addProcessedPathPart($processed) {
-		$this->processedPathParts[] = $processed;
+	/**
+	 * Sets the decoded
+	 *
+	 * @param \string $decoded
+	 * @return void
+	 */
+	public function setDecoded($decoded) {
+		$this->decoded = $decoded;
 	}
 
-	public function getParams() {
-		$params = $this->initParams;
-		foreach ($this->translators as $translator) {
-			$params = $this->mergeParams($params, $translator->getDecodedParams());
-		}
-		return $params;
-	}
-
-	protected function mergeParams($one, $two) {
-		// both arrays
-		if ( is_array($one) && is_array($two) ) {
-			$result = $one;
-			foreach ( $two as $kTwo => $vTwo ) {
-				// numerical index?
-				if (is_int($kTwo) || ctype_digit($kTwo)) {
-					$result[] = $vTwo;
-				} else if (!isset( $result[$kTwo] )) {
-					$result[$kTwo] = $vTwo;
-				} else {
-					$result[$kTwo] = $this->mergeParams($one[$kTwo], $vTwo);
-				}
-			}
-			return $result;
-		} else {
-			return $two;
-		}
-	}
 }
 ?>

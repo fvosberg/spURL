@@ -1,11 +1,11 @@
 <?php
+namespace Rattazonk\Spurl\Tests;
 
-namespace Rattzonk\Spurl\Tests;
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,7 +26,7 @@ namespace Rattzonk\Spurl\Tests;
  ***************************************************************/
 
 /**
- * Test case for class \Rattzonk\Spurl\Domain\Model\Path.
+ * Test case for class \Rattazonk\Spurl\Domain\Model\Path.
  *
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -37,53 +37,18 @@ namespace Rattzonk\Spurl\Tests;
  *
  * @author Frederik Vosberg <frederik.vosberg@rattazonk.de>
  */
-class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class DictionaryTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattzonk\Spurl\Domain\Model\Path
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Rattzonk\Spurl\Domain\Model\Path();
+		$this->fixture = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
 	}
-
-	/**
-	 * @test
-	 */
-	public function getEncodedReturnsInitialValueForString() { }
-
-	/**
-	 * @test
-	 */
-	public function setEncodedForStringSetsEncoded() { 
-		$this->fixture->setEncoded('Conceived at T3CON10');
-
-		$this->assertSame(
-			'Conceived at T3CON10',
-			$this->fixture->getEncoded()
-		);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function getDecodedReturnsInitialValueForString() { }
-
-	/**
-	 * @test
-	 */
-	public function setDecodedForStringSetsDecoded() { 
-		$this->fixture->setDecoded('Conceived at T3CON10');
-
-		$this->assertSame(
-			'Conceived at T3CON10',
-			$this->fixture->getDecoded()
-		);
-	}
-	
 }
 ?>

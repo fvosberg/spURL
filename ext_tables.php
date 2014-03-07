@@ -9,12 +9,12 @@ if (TYPO3_MODE === 'BE') {
 	 * Registers a Backend Module
 	 */
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-		'Rattazonk.' . $_EXTKEY,
+		'Rattzonk.' . $_EXTKEY,
 		'tools',	 // Make module a submodule of 'tools'
 		'configurator',	// Submodule key
 		'',						// Position
 		array(
-			'Path' => 'list, new, create, edit, update',
+			'Path' => '',
 		),
 		array(
 			'access' => 'user,group',
@@ -32,7 +32,7 @@ if (TYPO3_MODE === 'BE') {
 $TCA['tx_spurl_domain_model_path'] = array(
 	'ctrl' => array(
 		'title'	=> 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_path',
-		'label' => 'page',
+		'label' => 'encoded',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -50,41 +50,10 @@ $TCA['tx_spurl_domain_model_path'] = array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => 'page,',
+		'searchFields' => 'encoded,decoded,',
 		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/Path.php',
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_spurl_domain_model_path.gif'
 	),
 );
-
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_spurl_domain_model_pagepath', 'EXT:spurl/Resources/Private/Language/locallang_csh_tx_spurl_domain_model_pagepath.xlf');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_spurl_domain_model_pagepath');
-$TCA['tx_spurl_domain_model_pagepath'] = array(
-	'ctrl' => array(
-		'title'	=> 'LLL:EXT:spurl/Resources/Private/Language/locallang_db.xlf:tx_spurl_domain_model_pagepath',
-		'label' => 'uid',
-		'tstamp' => 'tstamp',
-		'crdate' => 'crdate',
-		'cruser_id' => 'cruser_id',
-		'dividers2tabs' => TRUE,
-
-		'versioningWS' => 2,
-		'versioning_followPages' => TRUE,
-		'origUid' => 't3_origuid',
-		'languageField' => 'sys_language_uid',
-		'transOrigPointerField' => 'l10n_parent',
-		'transOrigDiffSourceField' => 'l10n_diffsource',
-		'delete' => 'deleted',
-		'enablecolumns' => array(
-			'disabled' => 'hidden',
-			'starttime' => 'starttime',
-			'endtime' => 'endtime',
-		),
-		'searchFields' => '',
-		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/Pagepath.php',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_spurl_domain_model_pagepath.gif'
-	),
-);
-
-
 
 ?>

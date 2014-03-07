@@ -1,5 +1,5 @@
 <?php
-namespace Rattazonk\Spurl\Tests;
+namespace Rattzonk\Spurl\Tests;
 /***************************************************************
  *  Copyright notice
  *
@@ -38,40 +38,23 @@ namespace Rattazonk\Spurl\Tests;
  */
 class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattazonk\Spurl\Domain\Model\Path
+	 * @var 
 	 */
-	protected $path;
-
-	/**
-	 * @var \Rattazonk\Spurl\Controller\PathController
-	 */
-	protected $controller;
-
-	public static function setUpBeforeClass() {
-
-	}
+	protected $fixture;
 
 	public function setUp() {
-		$this->path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
-		$this->controller = $this->objectManager->get('\Rattazonk\Spurl\Controller\PathController');
+		$this->fixture = new \Rattzonk\Spurl\Domain\Model\Path();
+	}
+
+	public function tearDown() {
+		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function decodeAction() {
-		$this->assertEquals(1,1);
-		// machen wir später ist n Bug und gerade eh nicht so wichtig. Lets test the path
-		// $this->controller->decodeAction('http://rattazonk.de/?tx_blogit_posts%5Bpost%5D=1&tx_blogit_posts%5Baction%5D=show');
-		// $this->assertEquals([
-		// 		'tx_blogit_posts' => [
-		// 			'post' => 1,
-		// 			'action' => 'show'
-		// 		],
-		// 		'L' => 1
-		// 	],
-		// 	$this->controller->decodeAction('http://rattazonk.de/?tx_blogit_posts%5Bpost%5D=1&tx_blogit_posts%5Baction%5D=show')
-		// );
+	public function dummyMethod() {
+		$this->markTestIncomplete();
 	}
 
 }

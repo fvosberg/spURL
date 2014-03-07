@@ -1,11 +1,11 @@
 <?php
-namespace Rattzonk\Spurl\Controller;
+namespace Rattazonk\Spurl\Domain\Translator;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -32,15 +32,23 @@ namespace Rattzonk\Spurl\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
-
-	/**
-	 * pathRepository
-	 *
-	 * @var \Rattzonk\Spurl\Domain\Repository\PathRepository
-	 * @inject
-	 */
-	protected $pathRepository;
-
+class ExtbaseTranslator extends AbstractTranslator implements TranslatorInterface {
+	public function decode() {
+		$pathParts = $this->path->getNotProcessedPathParts();
+		foreach ( $pathParts as $pathPart ) {
+			$pathPartProcessed = FALSE;
+			foreach ($this->settings['dict'] as $dictionary) {
+				if ($pathPart == $dictionary['encoded']) {
+					$this->addDecodedParams( $dictionary['decoded'] );
+					$pathPartProcessed = TRUE;
+				}
+			}
+			if ( $pathPartProcessed ) {
+				$this->path->addProcessedPathPart( $pathPart );
+			} else {
+				break;
+			}
+		}
+	}
 }
 ?>

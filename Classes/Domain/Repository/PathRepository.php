@@ -1,5 +1,5 @@
 <?php
-namespace Rattzonk\Spurl\Controller;
+namespace Rattzonk\Spurl\Domain\Repository;
 
 /***************************************************************
  *  Copyright notice
@@ -32,15 +32,7 @@ namespace Rattzonk\Spurl\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
-
-	/**
-	 * pathRepository
-	 *
-	 * @var \Rattzonk\Spurl\Domain\Repository\PathRepository
-	 * @inject
-	 */
-	protected $pathRepository;
+class PathRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 }
 ?>
