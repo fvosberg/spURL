@@ -60,8 +60,55 @@ class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function encodeTypoScriptLinkAction() {
-		$this->assertEquals(1,1);
+	public function encodeAction() {
+		// integration test?
+		// $this->setProtectedProperty(
+		// 	$this->pathController,
+		// 	'settings',
+		// 	[
+		// 		'translators' => [
+		// 			10 => [
+		// 				'class' => '\Rattazonk\Spurl\Domain\Translator\DictionaryTranslator',
+		// 				'instances' => [
+		// 					10 => [
+		// 						'encoded' => 'rattazonk.com',
+		// 						'decoded' => [
+		// 							'L' => 0
+		// 						]
+		// 					],
+		// 					20 => [
+		// 						'onlyDecode' => 1,
+		// 						'encoded' => 'www.rattazonk.com',
+		// 						'decoded' => [
+		// 							'L' => 0
+		// 						]
+		// 					],
+		// 					30 => [
+		// 						'encoded' => 'rattazonk.de',
+		// 						'decoded' => [
+		// 							'L' => 1
+		// 						]
+		// 					],
+		// 					40 => [
+		// 						'onlyDecode' => 1,
+		// 						'encoded' => 'www.rattazonk.de',
+		// 						'decoded' => [
+		// 							'L' => 1
+		// 						]
+		// 					]
+		// 				]
+		// 			]
+		// 		]
+		// 	]
+		// );
+	}
+
+	protected function setProtectedProperty($instance, $propertyName, $value) {
+		$reflection = new ReflectionClass($instance);
+		$reflectionProperty = $reflection->getProperty($propertyName);
+		$reflectionProperty->setAccessible(true);
+
+		$reflection_property->setValue($instance, $value);
 	}
 
 }

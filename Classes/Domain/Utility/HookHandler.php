@@ -50,7 +50,7 @@ class HookHandler {
 				'vendorName' => 'Rattazonk'
 			));
 			$controller = $this->getObjectManager()->get($this->controllerClassName);
-			$params['LD']['totalURL'] = call_user_func(array($controller, 'encodeTypoScriptLinkAction'), $params['LD']['totalURL']);
+			$params['LD']['totalURL'] = call_user_func(array($controller, 'encodeAction'), $params['LD']['totalURL']);
 		}
 	}
 

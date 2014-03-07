@@ -48,7 +48,7 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	 * @param string $url
 	 * @return string $url
 	 */
-	public function encodeTypoScriptLinkAction($url) {
+	public function encodeAction($url) {
 		var_dump($url);
 		var_dump($this->settings);
 		die();
