@@ -1,5 +1,5 @@
 <?php
-namespace Rattzonk\Spurl\Controller;
+namespace Rattazonk\Spurl\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -37,7 +37,7 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	/**
 	 * pathRepository
 	 *
-	 * @var \Rattzonk\Spurl\Domain\Repository\PathRepository
+	 * @var \Rattazonk\Spurl\Domain\Repository\PathRepository
 	 * @inject
 	 */
 	protected $pathRepository;

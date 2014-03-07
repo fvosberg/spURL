@@ -1,5 +1,5 @@
 <?php
-namespace Rattzonk\Spurl\Tests;
+namespace Rattazonk\Spurl\Tests;
 /***************************************************************
  *  Copyright notice
  *
@@ -43,7 +43,7 @@ class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Rattzonk\Spurl\Domain\Model\Path();
+		$this->fixture = new \Rattazonk\Spurl\Domain\Model\Path();
 	}
 
 	public function tearDown() {

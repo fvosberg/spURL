@@ -1,5 +1,5 @@
 <?php
-namespace Rattzonk\Spurl\Domain\Model;
+namespace Rattazonk\Spurl\Domain\Model;
 
 /***************************************************************
  *  Copyright notice

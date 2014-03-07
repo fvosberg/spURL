@@ -1,6 +1,6 @@
 <?php
 
-namespace Rattzonk\Spurl\Tests;
+namespace Rattazonk\Spurl\Tests;
 /***************************************************************
  *  Copyright notice
  *
@@ -26,7 +26,7 @@ namespace Rattzonk\Spurl\Tests;
  ***************************************************************/
 
 /**
- * Test case for class \Rattzonk\Spurl\Domain\Model\Path.
+ * Test case for class \Rattazonk\Spurl\Domain\Model\Path.
  *
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -39,12 +39,12 @@ namespace Rattzonk\Spurl\Tests;
  */
 class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattzonk\Spurl\Domain\Model\Path
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Rattzonk\Spurl\Domain\Model\Path();
+		$this->fixture = new \Rattazonk\Spurl\Domain\Model\Path();
 	}
 
 	public function tearDown() {
