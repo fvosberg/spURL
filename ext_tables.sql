@@ -1,6 +1,7 @@
 #
 # Table structure for table 'tx_spurl_domain_model_path'
 # TODO index setup
+# TODO unique constraint for encoded
 #
 CREATE TABLE tx_spurl_domain_model_path (
 

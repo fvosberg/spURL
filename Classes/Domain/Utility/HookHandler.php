@@ -60,10 +60,9 @@ class HookHandler {
 		$encoded = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '/' . $pObj->siteScript;
 		$encoded = mysql_real_escape_string($encoded);
 		// TODO mysql injection
-		var_dump($encoded);
-		die();
+
 		// no extbase due to performance
-		$GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+		$path = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 			'decoded', // select
 			'tx_spurl_domain_model_path', // table
 			'encoded = "' . $requestedUri . '"',
@@ -73,6 +72,13 @@ class HookHandler {
 			'' // uidIndexField
 		);
 
+		if ( isset($path[0]) ) {
+			$decodedParams = json_encode( $path['decoded'] );
+			$pObj->id = $decodedParams['id'];
+			$pObj->mergingWithGetVars($decodedParams);
+		} else {
+			// TODO 404
+		}
 	}
 
 	/**
