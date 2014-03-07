@@ -1,5 +1,6 @@
 #
 # Table structure for table 'tx_spurl_domain_model_path'
+# TODO index setup
 #
 CREATE TABLE tx_spurl_domain_model_path (
 
