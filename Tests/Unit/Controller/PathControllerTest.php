@@ -4,7 +4,7 @@ namespace Rattazonk\Spurl\Tests;
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -38,23 +38,30 @@ namespace Rattazonk\Spurl\Tests;
  */
 class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var 
+	 * @var \Rattazonk\Spurl\Domain\Model\Path
 	 */
-	protected $fixture;
+	protected $path;
+
+	/**
+	 * @var \Rattazonk\Spurl\Domain\Controller\PathController
+	 */
+	protected $pathController;
 
 	public function setUp() {
-		$this->fixture = new \Rattazonk\Spurl\Domain\Model\Path();
+		$this->path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
+		$this->pathController = $this->objectManager->get('\Rattazonk\Spurl\Controller\PathController');
 	}
 
 	public function tearDown() {
-		unset($this->fixture);
+		unset($this->path);
+		unset($this->pathController);
 	}
 
 	/**
 	 * @test
 	 */
-	public function dummyMethod() {
-		$this->markTestIncomplete();
+	public function encodeTypoScriptLinkAction() {
+		$this->assertEquals(1,1);
 	}
 
 }

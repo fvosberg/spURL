@@ -5,7 +5,7 @@ namespace Rattazonk\Spurl\Controller;
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -42,5 +42,16 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	 */
 	protected $pathRepository;
 
+	/**
+	 * returns the encoded url and caches the result
+	 *
+	 * @param string $url
+	 * @return string $url
+	 */
+	public function encodeTypoScriptLinkAction($url) {
+		var_dump($url);
+		var_dump($this->settings);
+		die();
+	}
 }
 ?>

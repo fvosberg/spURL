@@ -38,14 +38,24 @@ class HookHandler {
 	 */
 	protected $controllerClassName = '\Rattazonk\Spurl\Controller\PathController';
 
-	public function hookTypoScriptLinkCreation($params, $pObj) {
-		$this->getExtbaseBootstrap()->initialize(array(
-			'pluginName' => 'Spurl',
-			'extensionName' => 'Spurl',
-			'vendorName' => 'Rattazonk'
-		));
-		$controller = $this->getObjectManager()->get($this->controllerClassName);
-		$params['LD']['totalURL'] = call_user_func(array($controller, 'encodeTypoScriptLinkAction'), $params['LD']['totalURL']);
+	public function hookTypoScriptLinkCreation(&$params, $pObj) {
+		$encoded = $this->cachedEncode($params['LD']['totalURL']);
+
+		if (is_string($encoded)) {
+			$params['LD']['totalURL'] = $encoded;
+		} else {
+			$this->getExtbaseBootstrap()->initialize(array(
+				'pluginName' => 'Spurl',
+				'extensionName' => 'Spurl',
+				'vendorName' => 'Rattazonk'
+			));
+			$controller = $this->getObjectManager()->get($this->controllerClassName);
+			$params['LD']['totalURL'] = call_user_func(array($controller, 'encodeTypoScriptLinkAction'), $params['LD']['totalURL']);
+		}
+	}
+
+	protected function cachedEncode($url) {
+		var_dump('cached encode ' . $url);
 	}
 
 	protected function getObjectManager() {
@@ -56,9 +66,9 @@ class HookHandler {
 		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Core\Bootstrap');
 	}
 
-	public function decode($_params, $pObj) {
+	public function decode($_params, &$pObj) {
 		$encoded = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '/' . $pObj->siteScript;
-		$encoded = mysql_real_escape_string($encoded);
+		$encoded = addslashes($encoded);
 		// TODO mysql injection
 
 		// no extbase due to performance
@@ -78,18 +88,10 @@ class HookHandler {
 			$pObj->mergingWithGetVars($decodedParams);
 		} else {
 			// TODO 404
+			// var_dump('set to 4');
+			// $pObj->id = 4;
+			// $pObj->mergingWithGetVars(['L' => 0]);
 		}
-	}
-
-	/**
-	 * MAYBE WITHOUT EXTBASE FOR PERFORMANCE
-	 */
-	public function cachedDecode() {
-		// caching framework
-	}
-
-	public function cachedEncode() {
-
 	}
 }
 ?>
