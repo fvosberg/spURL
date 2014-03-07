@@ -58,6 +58,7 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	 * @return array 	getParams
 	 */
 	public function decodeAction($encodedUrl) {
+		throw new \Exception( "DEPRECATED due to ddos. " );
 		$path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
 		$path->setEncodedUrl($encodedUrl);
 
@@ -67,7 +68,8 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 		$pageId = 1;
 		$settings = $this->getSettingsOfPage($pageId);
 		$path->initTranslators($settings['translators']);
-
+		var_dump($settings['translators'][20]['settings']);
+die();
 		// whenever the id got decoded we are stopping to retrieve the settings from this page
 		$path->setTranslatorPointerToNegativeOne();
 		while ( $path->nextTranslator() ) {

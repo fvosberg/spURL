@@ -57,22 +57,18 @@ class HookHandler {
 	}
 
 	public function decode($_params, $pObj) {
-		$spUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '/' . $pObj->siteScript;
-		$this->getExtbaseBootstrap()->initialize([
-			'pluginName' => 'Spurl',
-			'extensionName' => 'Spurl',
-			'vendorName' => 'Rattazonk'
-		]);
-		$controller = $this->getObjectManager()->get($this->controllerClassName);
-		$decodedParams = call_user_func([$controller, 'decodeAction'], $spUrl);
+		// no extbase due to performance
+		$GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+			'decoded', // select
+			'tx_spurl_domain_model_path', // table
+			$where_clause,
+			$groupBy = '',
+			$orderBy = '',
+			$limit = '',
+			$uidIndexField = ''
+		);
 
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($decodedParams);
-		die('decode');
-		$pObj->id = $decodedParams['id'];
-		$pObj->mergingWithGetVars($decodedParams);
 	}
-
-
 
 	/**
 	 * MAYBE WITHOUT EXTBASE FOR PERFORMANCE
