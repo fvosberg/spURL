@@ -50,5 +50,27 @@ class DictionaryTranslator extends AbstractTranslator implements TranslatorInter
 			}
 		}
 	}
+
+	/**
+	 * @param \Rattazonk\Spurl\Domain\Model\Path $path
+	 */
+	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
+		$unUsedDecoded = $path->getUnUsedDecoded();
+
+		$matches = TRUE;
+		foreach ((array) $this->settings['decoded'] as $decodedName => $decodedValue) {
+			if (!isset($unUsedDecoded[$decodedName]) || $unUsedDecoded[$decodedName] !== $decodedValue) {
+				$matches = FALSE;
+				break;
+			}
+		}
+
+		if ($matches) {
+			$path->addUsedDecoded($this->settings['decoded']);
+			$path->addEncodedParts((array) $this->settings['encoded']);
+		}
+		var_dump($path->getEncoded());
+		die();
+	}
 }
 ?>

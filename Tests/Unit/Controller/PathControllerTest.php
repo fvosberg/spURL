@@ -61,7 +61,7 @@ class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function encodeAction() {
-		// integration test?
+		// integration test? - ask somebody sma
 		// $this->setProtectedProperty(
 		// 	$this->pathController,
 		// 	'settings',
@@ -101,6 +101,7 @@ class PathControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		// 		]
 		// 	]
 		// );
+
 	}
 
 	protected function setProtectedProperty($instance, $propertyName, $value) {

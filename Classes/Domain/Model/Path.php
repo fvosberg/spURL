@@ -5,7 +5,7 @@ namespace Rattazonk\Spurl\Domain\Model;
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,58 +35,92 @@ namespace Rattazonk\Spurl\Domain\Model;
 class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
-	 * encoded
+	 * decoded get params
 	 *
-	 * @var \string
-	 * @validate NotEmpty
-	 */
-	protected $encoded;
-
-	/**
-	 * decoded
-	 *
-	 * @var \string
+	 * @var \array
 	 * @validate NotEmpty
 	 */
 	protected $decoded;
 
 	/**
-	 * Returns the encoded
+	 * usedDecoded params
 	 *
-	 * @return \string $encoded
+	 * @var \array
 	 */
-	public function getEncoded() {
-		return $this->encoded;
-	}
+	protected $usedDecoded = [];
 
 	/**
-	 * Sets the encoded
+	 * encoded path parts
 	 *
-	 * @param \string $encoded
-	 * @return void
+	 * @var \array
 	 */
-	public function setEncoded($encoded) {
-		$this->encoded = $encoded;
-	}
+	protected $encodedParts = [];
 
 	/**
 	 * Returns the decoded
 	 *
-	 * @return \string $decoded
+	 * @return \array $decoded
 	 */
 	public function getDecoded() {
 		return $this->decoded;
 	}
 
 	/**
-	 * Sets the decoded
-	 *
-	 * @param \string $decoded
-	 * @return void
+	 * inits the decoded
+	 * @param string $url
 	 */
-	public function setDecoded($decoded) {
-		$this->decoded = $decoded;
+	public function initDecoded($url) {
+		parse_str( parse_url($url, PHP_URL_QUERY), $this->decoded );
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getUnUsedDecoded() {
+		return $this->arrayRecursiveDiff($this->decoded, $this->usedDecoded);
+	}
+
+	protected function arrayRecursiveDiff($aArray1, $aArray2) {
+		$diff = array();
+
+		foreach ($aArray1 as $mKey => $mValue) {
+			if (array_key_exists($mKey, $aArray2)) {
+				if (is_array($mValue)) {
+					$aRecursiveDiff = arrayRecursiveDiff($mValue, $aArray2[$mKey]);
+					if (count($aRecursiveDiff)) { $diff[$mKey] = $aRecursiveDiff; }
+				} else {
+					if ($mValue != $aArray2[$mKey]) {
+					  $diff[$mKey] = $mValue;
+					}
+				}
+			} else {
+				$diff[$mKey] = $mValue;
+			}
+		}
+		return $diff;
+	}
+
+	/**
+	 * @param array $usedDecoded
+	 */
+	public function addUsedDecoded($usedDecoded) {
+		// dont think this will work properly, dont know exactly why
+		$this->usedDecoded = array_merge_recursive($this->usedDecoded, $usedDecoded);
+	}
+
+	/**
+	 * @param array $encoded
+	 */
+	public function addEncodedParts($encodedParts) {
+		$this->encodedParts = array_merge($this->encodedParts, $encodedParts);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getEncoded() {
+		// TODO trimimplode
+		return implode('/', $this->encodedParts) . '?' . http_build_query($this->getUnUsedDecoded());
+	}
 }
 ?>

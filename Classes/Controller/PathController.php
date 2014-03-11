@@ -43,15 +43,63 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	protected $pathRepository;
 
 	/**
+	 * @var array<\Rattazonk\Spurl\Domain\Utility\Translator\TranslatorInterface>
+	 */
+	protected $translators = [];
+
+	/**
 	 * returns the encoded url and caches the result
 	 *
 	 * @param string $url
 	 * @return string $url
 	 */
 	public function encodeAction($url) {
-		var_dump($url);
-		var_dump($this->settings);
+		$this->initializeTranslators();
+		$path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
+		// removes the query string and sets the decoded
+		$path->initDecoded($url);
+		// TODO gedanken zum cache. Wie abspeichern?
+		foreach ($this->translators as $translator) {
+			// manipulates the encoded in the path and the usedDecoded
+			$translator->encode($path);
+		}
+		$this->cachePath($path);
 		die();
+		return $path->getEncoded();
+	}
+
+	protected function initializeTranslators() {
+		foreach ($this->settings['translators'] as $translatorPosition => $translator) {
+			if (!isset($translator['class'])) {
+				throw new \Exception('Every translator definition in the settings must has a class attribute. ');
+			}
+
+			if (isset($translator['settings']['instances'])) {
+				foreach ($translator['settings']['instances'] as $instancePosition => $instanceSettings) {
+					$instance = $this->objectManager->get($translator['class']);
+					$instance->setSettings((array) $instanceSettings);
+					$this->translators[$translatorPostion . $instancePosition] = $instance;
+				}
+			}
+		}
+	}
+
+	/**
+	 * -- encoding --
+	 * load settings of page id
+	 * create set of watched get params
+	 * look for it in db
+	 *
+	 * -- decoding --
+	 * search for spurl (without gets) in db
+	 * merge params
+	 */
+
+	/**
+	 * saves the path in the cache
+	 */
+	protected function cachePath($path) {
+
 	}
 }
 ?>
