@@ -118,7 +118,7 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @return string
 	 */
-	public function getEncoded() {
+	public function getUrl() {
 		// TODO trimimplode
 		$url = implode('/', $this->encodedParts);
 		$query = http_build_query($this->getUnUsedDecoded());

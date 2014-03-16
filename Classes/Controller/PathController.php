@@ -70,14 +70,14 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 		$path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
 
 		// removes the query string and sets the decoded
-		$path->initDecoded($url);
+		$path->initDecoded($url . '&foo=bar');
 		// TODO gedanken zum cache. Wie abspeichern?
 		foreach ($this->translators as $translator) {
 			// manipulates the encoded in the path and the usedDecoded
 			$translator->encode($path);
 		}
 
-		$url = $path->getEncoded();
+		$url = $path->getUrl();
 		if( !isset($this->settings['urlLowerCase']) || (isset($this->settings['urlLowerCase']) && $this->settings['urlLowerCase']) ){
 			$url = strtolower($url);
 		}

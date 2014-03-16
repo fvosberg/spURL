@@ -5,7 +5,7 @@ namespace Rattazonk\Spurl\Tests;
  *  Copyright notice
  *
  *  (c) 2014 Frederik Vosberg <frederik.vosberg@rattazonk.de>, Rattazonk
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -54,36 +54,38 @@ class PathTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function getEncodedReturnsInitialValueForString() { }
-
-	/**
-	 * @test
-	 */
-	public function setEncodedForStringSetsEncoded() { 
-		$this->fixture->setEncoded('Conceived at T3CON10');
-
+	public function url() {
+		$this->fixture->initUrl('rattazonk.com/?convertedTo=blabla&foo=bar');
 		$this->assertSame(
-			'Conceived at T3CON10',
-			$this->fixture->getEncoded()
+			'rattazonk.com/?convertedTo=blabla&foo=bar',
+			$this->fixture->getUrl();
+		);
+
+		// triggering encoding
+		$this->assertSame(
+			'rattazonk.com/blabla?foo=bar',
+			$this->fixture->getUrl();
+		);
+
+		// only encoded parts (triggering encoding)
+		$this->assertSame(
+			'blabla',
+			$this->fixture->getEncoded();
+		);
+		// only decoded parts (from encoding, triggering too)
+		$this->assertSame(
+			['convertedTo' => 'blabla'],
+			$this->fixture->getDecoded();
+		);
+		$this->assertSame(
+			'rattazonk.com',
+			$this->fixture->getStaticPath()
+		);
+		$this->assertSame(
+			['foo' => 'bar'],
+			$this->fixture->getStaticParams()
 		);
 	}
-	
-	/**
-	 * @test
-	 */
-	public function getDecodedReturnsInitialValueForString() { }
 
-	/**
-	 * @test
-	 */
-	public function setDecodedForStringSetsDecoded() { 
-		$this->fixture->setDecoded('Conceived at T3CON10');
-
-		$this->assertSame(
-			'Conceived at T3CON10',
-			$this->fixture->getDecoded()
-		);
-	}
-	
 }
 ?>
