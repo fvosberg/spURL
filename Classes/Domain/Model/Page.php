@@ -1,5 +1,5 @@
 <?php
-namespace Rattazonk\Spurl\Domain\Translator;
+namespace Rattazonk\Spurl\Domain\Model;
 
 /***************************************************************
  *  Copyright notice
@@ -32,10 +32,43 @@ namespace Rattazonk\Spurl\Domain\Translator;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-interface TranslatorInterface {
-	public function setSettings($settings);
-	public function getSettings();
+class Page extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
-	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path);
+	/**
+	 * @var integer
+	 */
+	protected $uid;
+
+	/**
+	 * @var integer
+	 */
+	protected $pid;
+
+	/**
+	 * @var \Rattazonk\Spurl\Domain\Model\Page
+	 */
+	protected $parentPage;
+
+	/**
+	 * @var string
+	 */
+	protected $title;
+
+	public function setTitle($title) {
+		$this->title = $title;
+	}
+
+	public function getTitle() {
+		return $this->title;
+	}
+
+	public function setParentPage($parentPage) {
+		$this->parentPage = $parentPage;
+	}
+
+	public function getParentPage() {
+		return $this->parentPage;
+	}
+
 }
 ?>

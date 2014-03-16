@@ -48,7 +48,19 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	protected $translators = [];
 
 	/**
-	 * returns the encoded url and caches the result
+	 * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
+	 * @inject
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * get the decoded combinations via the indexer
+	 * encodes them
+	 * and caches them
+	 */
+
+	/**
+	 * returns the encoded url and caches the result - overrides in db!
 	 *
 	 * @param string $url
 	 * @return string $url
@@ -56,6 +68,7 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	public function encodeAction($url) {
 		$this->initializeTranslators();
 		$path = $this->objectManager->get('\Rattazonk\Spurl\Domain\Model\Path');
+
 		// removes the query string and sets the decoded
 		$path->initDecoded($url);
 		// TODO gedanken zum cache. Wie abspeichern?
@@ -63,8 +76,15 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 			// manipulates the encoded in the path and the usedDecoded
 			$translator->encode($path);
 		}
+
+		$url = $path->getEncoded();
+		if( !isset($this->settings['urlLowerCase']) || (isset($this->settings['urlLowerCase']) && $this->settings['urlLowerCase']) ){
+			$url = strtolower($url);
+		}
+		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($url);
+
 		$this->cachePath($path);
-		die();
+		die('encodeAction');
 		return $path->getEncoded();
 	}
 
@@ -78,28 +98,27 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 				foreach ($translator['settings']['instances'] as $instancePosition => $instanceSettings) {
 					$instance = $this->objectManager->get($translator['class']);
 					$instance->setSettings((array) $instanceSettings);
-					$this->translators[$translatorPostion . $instancePosition] = $instance;
+					$this->translators[$translatorPosition . $instancePosition] = $instance;
 				}
 			}
 		}
 	}
 
-	/**
-	 * -- encoding --
-	 * load settings of page id
-	 * create set of watched get params
-	 * look for it in db
-	 *
-	 * -- decoding --
-	 * search for spurl (without gets) in db
-	 * merge params
-	 */
+	protected function encodeFromCache($url) {
+
+	}
 
 	/**
 	 * saves the path in the cache
+	 * paths must be unique in both ways!
 	 */
 	protected function cachePath($path) {
-
+		// TODO what to do with persisted
+		if ( $this->persistenceManager->isNewObject($path) ) {
+			$this->pathRepository->add($path);
+		} else {
+			$this->pathRepository->update($path);
+		}
 	}
 }
 ?>

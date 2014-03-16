@@ -1,0 +1,13 @@
+config.tx_extbase.persistence.classes {
+	Rattazonk\Spurl\Domain\Model\Page {
+		mapping {
+			tableName = pages
+			columns {
+				uid.mapOnProperty = uid
+				pid.mapOnProperty = pid
+				pid.mapOnProperty = parentPage
+				title.mapOnProperty = title
+			}
+		}
+	}
+}

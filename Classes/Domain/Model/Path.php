@@ -120,7 +120,9 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 */
 	public function getEncoded() {
 		// TODO trimimplode
-		return implode('/', $this->encodedParts) . '?' . http_build_query($this->getUnUsedDecoded());
+		$url = implode('/', $this->encodedParts);
+		$query = http_build_query($this->getUnUsedDecoded());
+		return $url . (strlen($query) ? '?' . $query : '');
 	}
 }
 ?>

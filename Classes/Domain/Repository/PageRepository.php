@@ -1,5 +1,5 @@
 <?php
-namespace Rattazonk\Spurl\Domain\Translator;
+namespace Rattazonk\Spurl\Domain\Repository;
 
 /***************************************************************
  *  Copyright notice
@@ -32,10 +32,19 @@ namespace Rattazonk\Spurl\Domain\Translator;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-interface TranslatorInterface {
-	public function setSettings($settings);
-	public function getSettings();
+class PageRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+	public function initializeObject() {
+		/** @var $defaultQuerySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
+		$defaultQuerySettings = $this->objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings');
+		// go for $defaultQuerySettings = $this->createQuery()->getQuerySettings(); if you want to make use of the TS persistence.storagePid with defaultQuerySettings(), see #51529 for details
 
-	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path);
+		// don't add the pid constraint
+		$defaultQuerySettings->setRespectStoragePage(FALSE);
+		// don't add fields from enablecolumns constraint
+		$defaultQuerySettings->setRespectEnableFields(FALSE);
+		// don't add sys_language_uid constraint
+		$defaultQuerySettings->setRespectSysLanguage(FALSE);
+		$this->setDefaultQuerySettings($defaultQuerySettings);
+	}
 }
 ?>
