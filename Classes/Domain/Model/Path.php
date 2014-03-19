@@ -43,6 +43,16 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	protected $decoded;
 
 	/**
+	 * @var string
+	 */
+	protected $encodeHash;
+
+	/**
+	 * @var string
+	 */
+	protected $encoded;
+
+	/**
 	 * usedDecoded params
 	 *
 	 * @var \array
