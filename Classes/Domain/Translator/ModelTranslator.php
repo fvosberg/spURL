@@ -42,12 +42,7 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	/**
 	 * @var array
 	 */
-	protected $unUsedDecoded;
-
-	/**
-	 * @var array
-	 */
-	protected $usedDecoded;
+	protected $getParams;
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
@@ -60,7 +55,7 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	 */
 	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
 		$this->path = $path;
-		$this->unUsedDecoded = $path->getUnUsedDecoded();
+		$this->getParams = $path->getGetParams();
 
 		if ( $this->matches() ) {
 			$this->initModel();
@@ -73,15 +68,14 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 			$encodedParts = array_filter( $encodedParts );
 
 			$encoded .= $this->formatEncoded( $encodedParts );
-			$this->addUsedDecoded();
 		}
 
-		$path->addEncodedParts( (array) $encoded );
+		$path->addEncoded( $encoded );
 	}
 
 	protected function matches() {
-		return count( array_diff($unUsedDecoded, $this->settings['decoded']) )
-			== count($this->unUsedDecoded) - count($this->settings['decoded']);
+		return count( array_diff($getParams, $this->settings['decoded']) )
+			== count($this->getParams) - count($this->settings['decoded']);
 	}
 
 	protected function initModel() {
@@ -107,7 +101,7 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 		$identifiers = $this->getModelIdentifiers();
 		$this->modelIdentifierConditions = [];
 		foreach( $identifiers as $paramName => $fieldName){
-			$this->modelIdentifierConditions[] = $this->query->equals( $fieldName, $this->unUsedDecoded[$paramName] );
+			$this->modelIdentifierConditions[] = $this->query->equals( $fieldName, $this->getParams[$paramName] );
 		}
 	}
 
@@ -158,14 +152,6 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 			throw new \Exception("Error at formating path parts. ");
 		}
 		return $encoded;
-	}
-
-	protected function addUsedDecoded() {
-		$used = [];
-		foreach( $this->settings['decoded'] as $paramName => $fieldConfig) {
-			$used[$paramName] = $this->unUsedDecoded[$paramName];
-		}
-		$this->path->addUsedDecoded($used);
 	}
 }
 ?>

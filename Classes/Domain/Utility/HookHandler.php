@@ -39,9 +39,12 @@ class HookHandler {
 	protected $controllerClassName = '\Rattazonk\Spurl\Controller\PathController';
 
 	public function hookTypoScriptLinkCreation(&$params, $pObj) {
-		$encoded = $this->cachedEncode($params['LD']['totalURL']);
+		var_dump('encode');
+		var_dump($params['LD']['totalURL']);
 
-		if (is_string($encoded)) {
+		// $encoded = $this->cachedEncode($params['LD']['totalURL']);
+
+		if (FALSE && is_string($encoded)) {
 			$params['LD']['totalURL'] = $encoded;
 		} else {
 			$this->getExtbaseBootstrap()->initialize(array(
@@ -66,8 +69,15 @@ class HookHandler {
 	}
 
 	public function decode($_params, &$pObj) {
+		return;
+		$objectManager = $this->getObjectManager();
+
+
 		$encoded = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('HTTP_HOST') . '/' . $pObj->siteScript;
 		$encoded = addslashes($encoded);
+		var_dump('decode');
+		var_dump($encoded);
+		return;
 		// TODO mysql injection
 
 		// no extbase due to performance

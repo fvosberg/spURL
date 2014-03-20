@@ -1,5 +1,5 @@
 <?php
-namespace Rattazonk\Spurl\Domain\Translator;
+namespace Rattazonk\Spurl\Domain\Utility;
 
 /***************************************************************
  *  Copyright notice
@@ -32,25 +32,29 @@ namespace Rattazonk\Spurl\Domain\Translator;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class DictionaryTranslator extends AbstractTranslator implements TranslatorInterface {
+class Cache implements \TYPO3\CMS\Core\SingletonInterface {
+	/**
+	 * @var array
+	 */
+	static protected $processedPathsByEncoded;
 
 	/**
-	 * @param \Rattazonk\Spurl\Domain\Model\Path $path
+	 * @var \Rattazonk\Spurl\Domain\Repository\PathRepository
+	 * @inject
 	 */
-	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
-		$getParams = $path->getGetParams();
+	protected $pathRepository;
 
-		$matches = TRUE;
-		foreach ((array) $this->settings['decoded'] as $decodedName => $decodedValue) {
-			if (!isset($getParams[$decodedName]) || $getParams[$decodedName] !== $decodedValue) {
-				$matches = FALSE;
-				break;
-			}
+	/**
+	 * @var string $encoded
+	 */
+	public function hasEncoded($encoded) {
+		if(array_key_exists( $encoded, $this->processedPathsByEncoded )){
+			return TRUE;
+		} else {
+			$paths = $this->pathRepository->findByEncoded($encoded);
+			
 		}
-
-		if ($matches) {
-			$path->addEncoded($this->settings['encoded']);
-		}
+		var_dump(get_class($this->pathRepository));
 	}
 }
 ?>
