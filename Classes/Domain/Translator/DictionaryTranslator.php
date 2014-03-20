@@ -38,7 +38,7 @@ class DictionaryTranslator extends AbstractTranslator implements TranslatorInter
 	 * @param \Rattazonk\Spurl\Domain\Model\Path $path
 	 */
 	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
-		$getParams = $path->getGetParams();
+		$getParams = $path->getGetParamsAsArray();
 
 		$matches = TRUE;
 		foreach ((array) $this->settings['decoded'] as $decodedName => $decodedValue) {

@@ -92,7 +92,12 @@ class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * @return array
 	 */
 	protected function getSortedGetParams() {
-		return ksort($this->getParams);
+		ksort($this->getParams);
+		return $this->getParams;
+	}
+
+	public function getGetParamsAsArray() {
+		return $this->getParams;
 	}
 
 	/**
