@@ -84,12 +84,12 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 		$matches = TRUE;
 		foreach( $pattern as $getName => $config ){
 			// check the existence of the get param
-			if( array_key_exists($getName, $decoded) ){
+			if( !array_key_exists($getName, $decoded) ){
 				$matches = FALSE; break;
 			}
 			// check the value
 			if( array_key_exists('type', $config) && $config['type'] == 'db' ){
-				if( !strlen($decoded[$getName] ){
+				if( !strlen($decoded[$getName]) ){
 					$matches = FALSE; break;
 				}
 			} else if ( is_array($config) ) {
