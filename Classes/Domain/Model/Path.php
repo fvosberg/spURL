@@ -35,104 +35,90 @@ namespace Rattazonk\Spurl\Domain\Model;
 class Path extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
-	 * decoded get params
-	 *
-	 * @var \array
-	 * @validate NotEmpty
+	 * the encoded url with the query string (not encodable get params)
+	 * @var string
 	 */
-	protected $decoded;
+	protected $encoded = '';
+
+	/**
+	 * decoded and not decoded get params
+	 * @var array
+	 */
+	protected $getParams = [];
+
 
 	/**
 	 * @var string
+	 * @return void
 	 */
-	protected $encodeHash;
-
-	/**
-	 * @var string
-	 */
-	protected $encoded;
-
-	/**
-	 * usedDecoded params
-	 *
-	 * @var \array
-	 */
-	protected $usedDecoded = [];
-
-	/**
-	 * encoded path parts
-	 *
-	 * @var \array
-	 */
-	protected $encodedParts = [];
-
-	/**
-	 * Returns the decoded
-	 *
-	 * @return \array $decoded
-	 */
-	public function getDecoded() {
-		return $this->decoded;
-	}
-
-	/**
-	 * inits the decoded
-	 * @param string $url
-	 */
-	public function initDecoded($url) {
-		parse_str( parse_url($url, PHP_URL_QUERY), $this->decoded );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getUnUsedDecoded() {
-		return $this->arrayRecursiveDiff($this->decoded, $this->usedDecoded);
-	}
-
-	protected function arrayRecursiveDiff($aArray1, $aArray2) {
-		$diff = array();
-
-		foreach ($aArray1 as $mKey => $mValue) {
-			if (array_key_exists($mKey, $aArray2)) {
-				if (is_array($mValue)) {
-					$aRecursiveDiff = arrayRecursiveDiff($mValue, $aArray2[$mKey]);
-					if (count($aRecursiveDiff)) { $diff[$mKey] = $aRecursiveDiff; }
-				} else {
-					if ($mValue != $aArray2[$mKey]) {
-					  $diff[$mKey] = $mValue;
-					}
-				}
-			} else {
-				$diff[$mKey] = $mValue;
-			}
-		}
-		return $diff;
-	}
-
-	/**
-	 * @param array $usedDecoded
-	 */
-	public function addUsedDecoded($usedDecoded) {
-		// dont think this will work properly, dont know exactly why
-		$this->usedDecoded = array_merge_recursive($this->usedDecoded, $usedDecoded);
-	}
-
-	/**
-	 * @param array $encoded
-	 */
-	public function addEncodedParts($encodedParts) {
-		$this->encodedParts = array_merge($this->encodedParts, $encodedParts);
+	public function setEncoded($encoded) {
+		$this->encoded = $encoded;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getUrl() {
-		// TODO trimimplode
-		$url = implode('/', $this->encodedParts);
-		$query = http_build_query($this->getUnUsedDecoded());
-		return $url . (strlen($query) ? '?' . $query : '');
+	public function getEncoded() {
+		return $this->encoded;
+	}
+
+	/**
+	 * @param string $toAdd
+	 * @return void
+	 */
+	public function addEncoded($toAdd) {
+		if( strlen($toAdd) ){
+			$this->encoded .= strlen($this->encoded) ? '/' : '';
+			$this->encoded .= trim($toAdd, '/');
+		}
+	}
+
+	/**
+	 * @var string
+	 * @return void
+	 */
+	public function setGetParams($getParams) {
+		parse_str($getParams, $this->getParams);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getGetParams() {
+		return http_build_query($this->getSortedGetParams());
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getSortedGetParams() {
+		ksort($this->getParams);
+		return $this->getParams;
+	}
+
+	public function getGetParamsAsArray() {
+		return $this->getParams;
+	}
+
+	/**
+	 * sets the encoded and get params from the string
+	 * The encoded will be edited by encoding the path in the translators
+	 * The get params by decoding. 
+	 *
+	 * @param string
+	 * @return void
+	 */
+	public function initFromUrl($url) {
+		$url = preg_replace('/^http(s)?:\/\//', '', $url);
+
+		$queryString = (string) parse_url($url, PHP_URL_QUERY);
+		$this->encoded = ltrim( str_replace($paramQuery, '', $url), '?' );
+		$this->setGetParams($queryString);
+	}
+
+	public function initEncode() {
+		// clear the encoded, because all informations has to be present in the GET params. 
+		$this->encoded = '';
 	}
 }
 ?>
