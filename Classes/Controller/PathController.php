@@ -54,12 +54,6 @@ class PathController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	protected $persistenceManager;
 
 	/**
-	 * get the decoded combinations via the indexer
-	 * encodes them
-	 * and caches them
-	 */
-
-	/**
 	 * returns the encoded url and caches the result - overrides in db!
 	 *
 	 * @param string $url

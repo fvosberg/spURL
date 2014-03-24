@@ -62,7 +62,7 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 		$this->path = $path;
 		$this->unUsedDecoded = $path->getUnUsedDecoded();
 
-		if ( $this->matches() ) {
+		if ( $this->matchesDecoded() ) {
 			$this->initModel();
 			$encoded = isset( $this->settings['identifier'] ) ? $this->settings['identifier'] : '';
 
@@ -79,9 +79,36 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 		$path->addEncodedParts( (array) $encoded );
 	}
 
-	protected function matches() {
-		return count( array_diff($unUsedDecoded, $this->settings['decoded']) )
-			== count($this->unUsedDecoded) - count($this->settings['decoded']);
+	/**
+	 * TODO write a test, its not trivial ... for me :(
+	 * does this instance of translator match against the decoded params
+	 * @return boolean
+	 */
+	protected function matchesDecoded($pattern = NULL, $decoded = NULL) {
+		$pattern = is_null($pattern) ? $this->settings['decoded'] : $pattern;
+		$decoded = is_null($decoded) ? $this->unUsedDecoded : $decoded;
+		$matches = TRUE;
+		foreach( $pattern as $getName => $config ){
+			// check the existence of the get param
+			if( array_key_exists($getName, $decoded) ){
+				$matches = FALSE; break;
+			}
+			// check the value
+			if( array_key_exists('type', $config) && $config['type'] == 'db' ){
+				if( !strlen($decoded[$getName] ){
+					$matches = FALSE; break;
+				}
+			} else if ( is_array($config) ) {
+				if( !$this->matchesDecoded($config, $decoded[$getName]) ){
+					$matches = FALSE; break;
+				}
+			} else {
+				if( $config != $decoded[$getName] ){
+					$matches = FALSE; break;
+				}
+			}
+		}
+		return $matches;
 	}
 
 	protected function initModel() {
