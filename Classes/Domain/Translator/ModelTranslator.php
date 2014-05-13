@@ -55,7 +55,7 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	 */
 	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
 		$this->path = $path;
-		$this->getParams = $path->getGetParamsAsArray();
+		$this->getParams = $path->getGetParams();
 		if ( $this->matchesDecoded() ) {
 			$this->initModel();
 			$encoded = isset( $this->settings['identifier'] ) ? $this->settings['identifier'] : '';
@@ -67,9 +67,10 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 			$encodedParts = array_filter( $encodedParts );
 
 			$encoded .= $this->formatEncoded( $encodedParts );
+
+			$path->addEncoded( $encoded );
 		}
 
-		$path->addEncoded( $encoded );
 	}
 
 	/**

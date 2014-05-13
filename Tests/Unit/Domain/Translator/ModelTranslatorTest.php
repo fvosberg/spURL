@@ -45,6 +45,20 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function setUp() {
 		$this->fixture = new \Rattazonk\Spurl\Domain\Translator\ModelTranslator();
+		$this->injectObjectManager($this->fixture);
+	}
+
+	protected function injectObjectManager($object) {
+		$objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
+		$this->setProtectedProptery($object, 'objectManager', $objectManager);
+	}
+
+	protected function setProtectedProptery($object, $propertyName, $propertyValue) {
+		$reflection = new \ReflectionClass($object);
+		$reflectionProperty = $reflection->getProperty($propertyName);
+		$reflectionProperty->setAccessible(TRUE);
+
+		$reflectionProperty->setValue($object, $propertyValue);
 	}
 
 	public function tearDown() {
@@ -55,33 +69,35 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function matchesDecoded() {
-		$method = self::getMethod( get_class($this->fixture), 'matchesDecoded');
-
-		$this->assertTrue(
-			$method->invokeArgs(
-				$this->fixture, 
-				[
-					['id' => ['_typoScriptNodeValue' => 'uid', 'type' => 'db']], 
-					['id' => 1, 'L' => 0]
+		$this->fixture->setSettings([
+			'repository' => '\Rattazonk\Spurl\Domain\Repository\PageRepository',
+			'encoded' => [
+				'parts' => [
+					10 => [
+						'_typoScriptNodeValue' => 'title',
+						'type' => 'attribute'
+					]
+				],
+				'format' => '%s'
+			],
+			'decoded' => [
+				'id' => [
+					'_typoScriptNodeValue' => 'uid',
+					'type' => 'db'
 				]
-			)
-		);
-		$this->assertFalse(
-			$method->invokeArgs(
-				$this->fixture, 
-				[
-					['id' => ['_typoScriptNodeValue' => 'uid', 'type' => 'db']], 
-					['uid' => 1, 'L' => 0]
-				]
-			)
-		);
-	}
+			]
+		]);
 
-	protected static function getMethod($className, $methodName) {
-		$class = new \ReflectionClass($className);
-		$method = $class->getMethod($methodName);
-		$method->setAccessible(true);
-		return $method;
+		$path = $this->getMock('\Rattazonk\Spurl\Domain\Model\Path');
+		$path->expects($this->any())
+			->method('getGetParams')
+			->will($this->returnValue(['id' => 1]));
+
+		$path->expects($this->atLeastOnce())
+			->method('addEncoded');
+
+		$this->fixture->encode($path);
+		// should get called addEncoded
 	}
 
 }
