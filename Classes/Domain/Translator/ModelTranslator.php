@@ -56,7 +56,6 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
 		$this->path = $path;
 		$this->getParams = $path->getGetParamsAsArray();
-
 		if ( $this->matchesDecoded() ) {
 			$this->initModel();
 			$encoded = isset( $this->settings['identifier'] ) ? $this->settings['identifier'] : '';
@@ -80,16 +79,16 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	 */
 	protected function matchesDecoded($pattern = NULL, $decoded = NULL) {
 		$pattern = is_null($pattern) ? $this->settings['decoded'] : $pattern;
-		$decoded = is_null($decoded) ? $this->unUsedDecoded : $decoded;
+		$decoded = is_null($decoded) ? $this->getParams : $decoded;
 		$matches = TRUE;
 		foreach( $pattern as $getName => $config ){
 			// check the existence of the get param
-			if( array_key_exists($getName, $decoded) ){
+			if( !array_key_exists($getName, $decoded) ){
 				$matches = FALSE; break;
 			}
 			// check the value
 			if( array_key_exists('type', $config) && $config['type'] == 'db' ){
-				if( !strlen($decoded[$getName] ){
+				if( !strlen($decoded[$getName]) ){
 					$matches = FALSE; break;
 				}
 			} else if ( is_array($config) ) {
@@ -145,10 +144,8 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	}
 
 	protected function encodePart($partConfig) {
-		// var_dump($partConfig['type']);
 		// TODO Refactor with strategy pattern?
 		if( $partConfig['type'] == 'attribute' ){
-			\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($this->model);
 			$encoded = call_user_func([$this->model, 'get' . ucfirst($partConfig['_typoScriptNodeValue'])], []);
 		} else if( $partConfig['type'] == 'hierarchical' ){
 			$parentGetter = 'get' . ucfirst( $partConfig['parent'] );
