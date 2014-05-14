@@ -39,7 +39,7 @@ namespace Rattazonk\Spurl\Tests;
  */
 class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Rattazonk\Spurl\Domain\Model\Path
+	 * @var \Rattazonk\Spurl\Domain\Translator\ModelTranslator
 	 */
 	protected $fixture;
 
@@ -56,7 +56,7 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function matchesDecoded() {
+	public function resolves() {
 		$this->fixture->setSettings([
 			'decoded' => [
 				'id' => [
