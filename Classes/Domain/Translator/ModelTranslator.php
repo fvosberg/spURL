@@ -55,8 +55,8 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	 */
 	public function encode(\Rattazonk\Spurl\Domain\Model\Path $path) {
 		$this->path = $path;
-		$this->getParams = $path->getGetParams();
-		if ( $this->matchesDecoded() ) {
+		$this->getParams = $path->getGetParamsAsArray();
+		if ( $this->resolves() ) {
 			$this->initModel();
 			$encoded = isset( $this->settings['identifier'] ) ? $this->settings['identifier'] : '';
 
@@ -74,30 +74,27 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 	}
 
 	/**
-	 * TODO write a test, its not trivial ... for me :(
-	 * does this instance of translator match against the decoded params
+	 * does this instance of the translator resolves the decoded params
 	 * @return boolean
 	 */
-	protected function matchesDecoded($pattern = NULL, $decoded = NULL) {
-		$pattern = is_null($pattern) ? $this->settings['decoded'] : $pattern;
-		$decoded = is_null($decoded) ? $this->getParams : $decoded;
+	protected function resolves() {
 		$matches = TRUE;
-		foreach( $pattern as $getName => $config ){
+		foreach( $this->settings['decoded'] as $getName => $config ){
 			// check the existence of the get param
-			if( !array_key_exists($getName, $decoded) ){
+			if( !array_key_exists($getName, $this->getParams) ){
 				$matches = FALSE; break;
 			}
 			// check the value
 			if( array_key_exists('type', $config) && $config['type'] == 'db' ){
-				if( !strlen($decoded[$getName]) ){
+				if( !strlen($this->getParams[$getName]) ){
 					$matches = FALSE; break;
 				}
 			} else if ( is_array($config) ) {
-				if( !$this->matchesDecoded($config, $decoded[$getName]) ){
+				if( !$this->matchesDecoded($config, $this->getParams[$getName]) ){
 					$matches = FALSE; break;
 				}
 			} else {
-				if( $config != $decoded[$getName] ){
+				if( $config != $this->getParams[$getName] ){
 					$matches = FALSE; break;
 				}
 			}
@@ -168,7 +165,6 @@ class ModelTranslator extends AbstractTranslator implements TranslatorInterface 
 			array_unshift($formats, $formats['_typoScriptNodeValue']);
 			unset( $formats['_typoScriptNodeValue'] );
 		}
-
 		foreach( $formats as $format ){
 			$encoded = vsprintf($format, $parts);
 			if(strlen( $encoded )){ break; }

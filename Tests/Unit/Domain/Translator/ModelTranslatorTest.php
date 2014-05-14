@@ -44,21 +44,9 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Rattazonk\Spurl\Domain\Translator\ModelTranslator();
-		$this->injectObjectManager($this->fixture);
-	}
-
-	protected function injectObjectManager($object) {
-		$objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
-		$this->setProtectedProptery($object, 'objectManager', $objectManager);
-	}
-
-	protected function setProtectedProptery($object, $propertyName, $propertyValue) {
-		$reflection = new \ReflectionClass($object);
-		$reflectionProperty = $reflection->getProperty($propertyName);
-		$reflectionProperty->setAccessible(TRUE);
-
-		$reflectionProperty->setValue($object, $propertyValue);
+		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+	#	$this->fixture = $objectManager->get('\Rattazonk\Spurl\Domain\Translator\ModelTranslator');
+		$this->fixture = $this->getAccessibleMock('Rattazonk\Spurl\Domain\Translator\ModelTranslator', ['dummy']);
 	}
 
 	public function tearDown() {
@@ -70,16 +58,6 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function matchesDecoded() {
 		$this->fixture->setSettings([
-			'repository' => '\Rattazonk\Spurl\Domain\Repository\PageRepository',
-			'encoded' => [
-				'parts' => [
-					10 => [
-						'_typoScriptNodeValue' => 'title',
-						'type' => 'attribute'
-					]
-				],
-				'format' => '%s'
-			],
 			'decoded' => [
 				'id' => [
 					'_typoScriptNodeValue' => 'uid',
@@ -88,16 +66,8 @@ class ModelTranslatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 			]
 		]);
 
-		$path = $this->getMock('\Rattazonk\Spurl\Domain\Model\Path');
-		$path->expects($this->any())
-			->method('getGetParams')
-			->will($this->returnValue(['id' => 1]));
-
-		$path->expects($this->atLeastOnce())
-			->method('addEncoded');
-
-		$this->fixture->encode($path);
-		// should get called addEncoded
+		$this->fixture->_set('getParams', ['id' => 1]);
+		$this->assertTrue($this->fixture->_call('resolves'));
 	}
 
 }
